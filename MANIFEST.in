@@ -1,2 +1,2 @@
-include README README.rst DESCRIPTION
+include README README.md DESCRIPTION
 exclude *.pyc
