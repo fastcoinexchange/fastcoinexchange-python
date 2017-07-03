@@ -13,3 +13,11 @@ class UnknownRequestMethod(Exception):
 
     def __str__(self):
         return 'Unknown request method: %s' % self.method
+
+
+class UnknownResponseKey(Exception):
+    def __init__(self, key):
+        self.key = key
+
+    def __str__(self):
+        return 'Unknown response key: %s' % self.key

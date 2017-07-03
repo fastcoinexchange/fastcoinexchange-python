@@ -3,6 +3,10 @@ from booby.fields import *
 from booby.validators import nullable
 
 
+CURRENCY_BTC, CURRENCY_USD = 'btc', 'usd'
+CURRENCY_CHOICES = (CURRENCY_BTC, CURRENCY_USD, )
+
+
 class DecimalValidator(object):
     """This validator forces fields values to be an instance of `Decimal`."""
 
@@ -17,3 +21,11 @@ class Decimal(Field):
 
     def __init__(self, *args, **kwargs):
         super(Decimal, self).__init__(DecimalValidator(), *args, **kwargs)
+
+
+class Currency(String):
+    """:class"`String` subclass"""
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = CURRENCY_CHOICES
+        super(Currency, self).__init__(*args, **kwargs)
