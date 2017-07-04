@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="FastCoinExchange",
-    version=__import__('fastcoinexchange-python').__version__,
+    version=__import__('fastex').__version__,
     description=open(os.path.join(os.path.dirname(__file__), "DESCRIPTION")).read(),
     license="The MIT License (MIT)",
     keywords="coin, exchange",
