@@ -1,7 +1,6 @@
-import time
+from decimal import Decimal
 
 from fastex import models
-from fastex.encrypt import Encryption
 from fastex.fields import CURRENCY_BTC, CURRENCY_USD
 from fastex.base_models import Options
 
@@ -10,6 +9,7 @@ PRIVATE = """-----BEGIN PRIVATE KEY-----
 
 PUBLIC = """-----BEGIN PUBLIC KEY-----
 -----END PUBLIC KEY-----"""
+
 
 options = Options(
     api_url="https://fastcoinexchange.com/api/v1/{method}",
@@ -21,9 +21,14 @@ options = Options(
 # rate = models.Rate(options)
 # print(rate.get(keys=['tm']))
 
-data = {
-    'currency': CURRENCY_BTC,
-}
+# balance = models.Balance(options, **{
+#     'currency': CURRENCY_BTC,
+# })
+# print(balance.get())
 
-balance = models.Balance(options, **data)
-print(balance.get())
+exchange = models.Exchange(options, **{
+    'amount': Decimal(10),
+    'currency_from': CURRENCY_USD,
+    'currency_to': CURRENCY_BTC,
+})
+exchange.get()

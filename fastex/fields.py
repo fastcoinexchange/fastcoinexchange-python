@@ -1,18 +1,19 @@
+from decimal import Decimal as DecimalType
+
 from booby import errors
 from booby.fields import *
-from booby.validators import nullable
-
+from booby.validators import nullable, Validator
 
 CURRENCY_BTC, CURRENCY_USD = 'btc', 'usd'
 CURRENCY_CHOICES = (CURRENCY_BTC, CURRENCY_USD, )
 
 
-class DecimalValidator(object):
+class DecimalValidator(Validator):
     """This validator forces fields values to be an instance of `Decimal`."""
 
     @nullable
     def validate(self, value):
-        if not isinstance(value, Decimal):
+        if not isinstance(value, DecimalType):
             raise errors.ValidationError('should be a Decimal')
 
 

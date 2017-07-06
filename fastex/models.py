@@ -10,7 +10,7 @@ class Rate(Base):
 class Balance(Base):
     method = "balance"
     query_method = POST
-    is_private = True
+    is_private = False
 
     currency = fields.Currency()
 
@@ -18,7 +18,7 @@ class Balance(Base):
 class Exchange(Base):
     method = "exchange"
     query_method = POST
-    is_private = True
+    is_private = False
 
     amount = fields.Decimal(required=True)
     currency_from = fields.Currency(required=True)
@@ -30,7 +30,7 @@ class Exchange(Base):
 class Invoice(Base):
     method = "invoice"
     query_method = POST
-    is_private = True
+    is_private = False
 
     amount = fields.Decimal(required=True)
     currency = fields.Currency()

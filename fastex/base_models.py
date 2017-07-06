@@ -19,7 +19,7 @@ class Options(object):
         self.private = private
         self.public = public
         self.unique_id = unique_id
-        self.encryption = Encryption("sha512", self.public, self.private)
+        self.encryption = Encryption("sha1", self.public, self.private)
         for k, v in kwargs.items():
             self.__setattr__(k, v)
 
@@ -70,7 +70,6 @@ class Base(Model):
             }
 
         response = self.request(data)
-        # response = self.options.encryption.decode(data['sign'], response)
         if keys:
             values = {}
             for key in keys:
