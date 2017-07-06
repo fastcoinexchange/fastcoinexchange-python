@@ -32,8 +32,9 @@ class Base(Model):
     url, method, query_method = None, None, None
     is_private = False
 
-    def __init__(self, options,  *args, **kwargs):
+    def __init__(self, options, **kwargs):
         self.options = options
+        self.data = kwargs
         super().__init__(**kwargs)
         self.url = self.options.api_url.format(method=self.method) if self.method else ""
 
@@ -54,7 +55,8 @@ class Base(Model):
         else:
             return json.dumps(dict(self.validation_errors))
 
-    def get(self, data, keys=None):
+    def get(self, keys=None):
+        data = self.data
         req = dict()
         req['nonce'] = int(time.time())
         req.update(data)

@@ -18,17 +18,12 @@ options = Options(
     unique_id="LlaQSA",
 )
 
-rate = models.Rate(options)
-print(rate.get({}, keys=['tm']))
+# rate = models.Rate(options)
+# print(rate.get(keys=['tm']))
 
-# encryption = Encryption("sha512", PUBLIC, PRIVATE)
-#
-# data = {
-#     'currency': CURRENCY_BTC,
-#     'unique_id': "LlaQSA",
-# }
-#
-# balance = models.Balance(options, currency=CURRENCY_BTC)
-# response = balance.get(data)
-#
-# print(response)
+data = {
+    'currency': CURRENCY_BTC,
+}
+
+balance = models.Balance(options, **data)
+print(balance.get())
