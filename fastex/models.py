@@ -2,7 +2,7 @@ from fastex import fields
 from fastex.base_models import PublicRequest, PrivateRequest, GET, POST, Base
 
 
-class Rate(PublicRequest):
+class Rate(Base):
     method = "rate"
     query_method = GET
 
@@ -10,13 +10,15 @@ class Rate(PublicRequest):
 class Balance(Base):
     method = "balance"
     query_method = POST
+    is_private = True
 
     currency = fields.Currency()
 
 
-class Exchange(PrivateRequest):
+class Exchange(Base):
     method = "exchange"
     query_method = POST
+    is_private = True
 
     amount = fields.Decimal(required=True)
     currency_from = fields.Currency(required=True)
@@ -25,9 +27,10 @@ class Exchange(PrivateRequest):
     rate_bid = fields.Decimal(required=False)
 
 
-class Invoice(PrivateRequest):
+class Invoice(Base):
     method = "invoice"
     query_method = POST
+    is_private = True
 
     amount = fields.Decimal(required=True)
     currency = fields.Currency()

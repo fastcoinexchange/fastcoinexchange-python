@@ -30,6 +30,7 @@ class Options(object):
 
 class Base(Model):
     url, method, query_method = None, None, None
+    is_private = False
 
     def __init__(self, options,  *args, **kwargs):
         self.options = options
@@ -46,30 +47,28 @@ class Base(Model):
                 raise UnknownRequestMethod(self.query_method)
 
             r = response.json()
-            print("ERROR:", r)
             code = r.get('code')
-            msg = r.get('message', '')
             if code is not 0:
-                raise APIError(code, msg)
+                raise APIError(code, r.get('return', ''))
             return r
         else:
             return json.dumps(dict(self.validation_errors))
 
     def get(self, data, keys=None):
-        req = {}
-        nonce = int(time.time())
-        req['nonce'] = nonce
+        req = dict()
+        req['nonce'] = int(time.time())
         req.update(data)
-        encrypted_data = self.options.encryption.encode(req)
-        data = {
-            'unique_id': self.options.unique_id,
-            'sign': encrypted_data.get('sign'),
-            'data': encrypted_data.get('data'),
-            'nonce': req['nonce'],
-        }
+        if self.is_private:
+            encrypted_data = self.options.encryption.encode(req)
+            data = {
+                'unique_id': self.options.unique_id,
+                'sign': encrypted_data.get('sign'),
+                'data': encrypted_data.get('data'),
+                'nonce': req['nonce'],
+            }
 
         response = self.request(data)
-        response = self.options.encryption.decode(data['sign'], response)
+        # response = self.options.encryption.decode(data['sign'], response)
         if keys:
             values = {}
             for key in keys:
