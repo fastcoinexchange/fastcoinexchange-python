@@ -33,4 +33,4 @@ class Invoice(Base):
     is_private = False
 
     amount = fields.Decimal(required=True)
-    currency = fields.Currency()
+    currency = fields.Currency(default=fields.CURRENCY_USD)
