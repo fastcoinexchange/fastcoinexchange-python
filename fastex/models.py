@@ -34,3 +34,26 @@ class Invoice(Base):
 
     amount = fields.Decimal(required=True)
     currency = fields.Currency(default=fields.CURRENCY_USD)
+
+
+class InvoiceCheck(Base):
+    method = "invoicecheck"
+    query_method = POST
+    is_private = False
+
+    address = fields.BitcoinAddress(required=True)
+
+
+class InvoiceRate(Base):
+    method = "invoicerate"
+    query_method = POST
+    is_private = False
+
+
+class InvoiceSum(Base):
+    method = "invoicesum"
+    query_method = POST
+    is_private = False
+
+    amount = fields.Decimal(required=True)
+    currency = fields.Currency(default=fields.CURRENCY_USD)

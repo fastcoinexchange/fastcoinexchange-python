@@ -1,6 +1,7 @@
 import unittest
 
 from decimal import Decimal
+from unittest import skip
 
 from fastex import models
 from fastex.base_models import Options
@@ -103,6 +104,26 @@ class TestModels(Helper, unittest.TestCase):
             ).get(),
             '{"amount": "should be a Decimal"}')
 
+    def test_invoicecheck_without_parameters(self):
+        self.assertFalse(models.InvoiceCheck(self.options).is_valid)
+
+    def test_invoicecheck_with_wrong_address(self):
+        self.assertEqual(
+            models.InvoiceCheck(
+                self.options,
+                address="OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+            ).get(),
+            '{"address": "should be a valid Bitcoin Address"}')
+
+    def test_invoicecheck_with_right_parameters(self):
+        self.assertTrue(
+            models.InvoiceCheck(
+                self.options,
+                address="111111111111111111111111111111"
+            ).is_valid
+        )
+
+    @skip
     def test_key_filtering(self):
         rate = models.Rate(self.options)
         response = rate.get()
@@ -121,6 +142,7 @@ class TestServer(Helper, unittest.TestCase):
     Tests for checking the server connection.
     """
 
+    @skip
     def test_connection(self):
         response = models.Rate(self.options).get()
         self.assertIn('code', response.keys())

@@ -50,7 +50,7 @@ class Base(Model):
             r = response.json()
             code = r.get('code')
             if code is not 0:
-                raise APIError(code, r.get('return', ''))
+                raise APIError(code, r.get('return', '') or r.get('message', ''))
             return r
         else:
             return json.dumps(dict(self.validation_errors))
