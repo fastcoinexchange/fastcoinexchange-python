@@ -3,12 +3,14 @@ import unittest
 from decimal import Decimal
 from unittest import skip
 
+from booby import errors
+
 from fastex import models
 from fastex.base_models import Options
 from fastex import fields
 
 
-class Helper(unittest.TestCase):
+class SetupHelper(unittest.TestCase):
     """
     Helper class for tests. It creates Options for multiple using.
     """
@@ -25,7 +27,7 @@ class Helper(unittest.TestCase):
         )
 
 
-class TestModels(Helper, unittest.TestCase):
+class TestModels(SetupHelper, unittest.TestCase):
     """
     Tests for checking models behavior.
     """
@@ -165,7 +167,7 @@ class TestModels(Helper, unittest.TestCase):
         self.assertEqual(1, len(response))
 
 
-class TestServer(Helper, unittest.TestCase):
+class TestServer(SetupHelper, unittest.TestCase):
     """
     Tests for checking the server connection.
     """
@@ -175,6 +177,56 @@ class TestServer(Helper, unittest.TestCase):
         response = models.Rate(self.options).get()
         self.assertIn('code', response.keys())
         self.assertEqual(response.get('code'), 0)
+
+
+class TestValidators(unittest.TestCase):
+    """
+    Tests for the fastex validators
+    """
+
+    error = errors.ValidationError
+
+    @staticmethod
+    def validate(validator, value):
+        validator.validate(None, value)
+
+    def test_decimal_validator(self):
+        validator = fields.DecimalValidator
+
+        with self.assertRaises(self.error):
+            self.validate(validator, 10)
+
+        with self.assertRaises(self.error):
+            self.validate(validator, "10")
+
+        with self.assertRaises(self.error):
+            self.validate(validator, 10.0)
+
+        raised = False
+        try:
+            self.validate(validator, Decimal(10.0))
+        except self.error:
+            raised = True
+        self.assertFalse(raised)
+
+    def test_bitcoin_address_validator(self):
+        validator = fields.BitcoinAddressValidator
+
+        with self.assertRaises(self.error):
+            self.validate(validator, "1111")
+
+        with self.assertRaises(self.error):
+            self.validate(validator, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+        with self.assertRaises(self.error):
+            self.validate(validator, "aaaaaaaaaaaaaaaaaaaaaaaaOaaaaa")
+
+        raised = False
+        try:
+            self.validate(validator, "1aaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        except self.error:
+            raised = True
+        self.assertFalse(raised)
 
 
 if __name__ == '__main__':
