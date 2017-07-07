@@ -50,5 +50,8 @@ rate.get(keys=['bid'])
 * Balance
 * Exchange
 * Invoice
+* InvoiceCheck
+* InvoiceRate
+* InvoiceSum
 
 this list might be extended
