@@ -153,7 +153,6 @@ class TestModels(SetupHelper, unittest.TestCase):
             ).get(),
             '{"amount": "should be a Decimal"}')
 
-    @skip
     def test_key_filtering(self):
         rate = models.Rate(self.options)
         response = rate.get()
@@ -172,7 +171,6 @@ class TestServer(SetupHelper, unittest.TestCase):
     Tests for checking the server connection.
     """
 
-    @skip
     def test_connection(self):
         response = models.Rate(self.options).get()
         self.assertIn('code', response.keys())
@@ -227,6 +225,56 @@ class TestValidators(unittest.TestCase):
         except self.error:
             raised = True
         self.assertFalse(raised)
+
+
+class TestData(SetupHelper, unittest.TestCase):
+
+    def test_rate(self):
+        expected_data = {}
+        self.assertEqual(models.Rate(self.options).make_data(), expected_data)
+
+    def test_balance(self):
+        expected_data = {'currency': 'btc'}
+        self.assertEqual(models.Balance(
+            self.options,
+            currency=fields.CURRENCY_BTC
+        ).make_data(), expected_data)
+
+    def test_exchange(self):
+        expected_data = {'amount': Decimal('10'), 'currency_from': 'btc', 'currency_to': 'usd'}
+        self.assertEqual(models.Exchange(
+            self.options,
+            amount=Decimal(10),
+            currency_from=fields.CURRENCY_BTC,
+            currency_to=fields.CURRENCY_USD
+        ).make_data(), expected_data)
+
+    def test_invoice(self):
+        expected_data = {'amount': Decimal('10'), 'currency': 'btc'}
+        self.assertEqual(models.Invoice(
+            self.options,
+            amount=Decimal(10),
+            currency=fields.CURRENCY_BTC
+        ).make_data(), expected_data)
+
+    def test_invoice_check(self):
+        expected_data = {'address': '111111111111111111111111111111'}
+        self.assertEqual(models.InvoiceCheck(
+            self.options,
+            address="111111111111111111111111111111"
+        ).make_data(), expected_data)
+
+    def test_invoice_rate(self):
+        expected_data = {}
+        self.assertEqual(models.InvoiceRate(self.options).make_data(), expected_data)
+
+    def test_invoice_sum(self):
+        expected_data = {'amount': Decimal('10'), 'currency': 'btc'}
+        self.assertEqual(models.InvoiceSum(
+            self.options,
+            amount=Decimal(10),
+            currency=fields.CURRENCY_BTC
+        ).make_data(), expected_data)
 
 
 if __name__ == '__main__':

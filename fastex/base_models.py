@@ -55,7 +55,7 @@ class Base(Model):
         else:
             return json.dumps(dict(self.validation_errors))
 
-    def get(self, keys=None):
+    def make_data(self):
         data = self.data
         req = dict()
         req['nonce'] = int(time.time())
@@ -68,8 +68,10 @@ class Base(Model):
                 'data': encrypted_data.get('data'),
                 'nonce': req['nonce'],
             }
+        return data
 
-        response = self.request(data)
+    def get(self, keys=None):
+        response = self.request(self.make_data())
         if keys:
             values = {}
             for key in keys:
