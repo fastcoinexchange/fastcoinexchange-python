@@ -103,6 +103,18 @@ class TestModels(Helper, unittest.TestCase):
             ).get(),
             '{"amount": "should be a Decimal"}')
 
+    def test_key_filtering(self):
+        rate = models.Rate(self.options)
+        response = rate.get()
+        self.assertIn('code', response.keys())
+        self.assertIn('tm', response.get('data').keys())
+        self.assertIn('ask', response.get('data').keys())
+        self.assertIn('bid', response.get('data').keys())
+        response = rate.get(keys=['tm'])
+        self.assertNotIn('code', response.keys())
+        self.assertIn('tm', response.keys())
+        self.assertEqual(1, len(response))
+
 
 class TestServer(Helper, unittest.TestCase):
     """
