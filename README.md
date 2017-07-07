@@ -16,6 +16,8 @@ from fastex.base_models import Options
 
 ## How to use?
 
+### Options
+
 If you want to have an access to the private methods, then tou have to save your parameters into `Options` instance:
 
 ```python
@@ -27,6 +29,8 @@ options = Options(
 )
 ```
 
+### Request API
+
 Let's assume that we want to get the current rate of the bitcoin.
 Following code does that:
 
@@ -37,6 +41,8 @@ rate.get()
 # {'code': 0, 'data': {'tm': '1499418523', 'ask': 252656799000, 'bid': 249463614000}}
 ```
 This is a `dict` object, so you don't have to worry about the conversion.
+
+### Response filtering
 
 If you need one field only, e.g. `bid`, you could use the `keys` argument like following:
 ```python
