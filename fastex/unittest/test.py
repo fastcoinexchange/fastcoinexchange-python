@@ -104,10 +104,10 @@ class TestModels(Helper, unittest.TestCase):
             ).get(),
             '{"amount": "should be a Decimal"}')
 
-    def test_invoicecheck_without_parameters(self):
+    def test_invoice_check_without_parameters(self):
         self.assertFalse(models.InvoiceCheck(self.options).is_valid)
 
-    def test_invoicecheck_with_wrong_address(self):
+    def test_invoice_check_with_wrong_address(self):
         self.assertEqual(
             models.InvoiceCheck(
                 self.options,
@@ -115,13 +115,41 @@ class TestModels(Helper, unittest.TestCase):
             ).get(),
             '{"address": "should be a valid Bitcoin Address"}')
 
-    def test_invoicecheck_with_right_parameters(self):
+    def test_invoice_check_with_right_parameters(self):
         self.assertTrue(
             models.InvoiceCheck(
                 self.options,
                 address="111111111111111111111111111111"
             ).is_valid
         )
+
+    def test_invoice_rate(self):
+        self.assertTrue(models.InvoiceRate(self.options).is_valid)
+
+    def test_invoice_sum_with_all_parameters(self):
+        self.assertTrue(models.InvoiceSum(
+            self.options,
+            amount=Decimal(10.3),
+            currency=fields.CURRENCY_BTC
+        ).is_valid)
+
+    def test_invoice_sum_without_parameters(self):
+        self.assertFalse(models.InvoiceSum(self.options).is_valid)
+
+    def test_invoice_sum_with_required_parameters(self):
+        self.assertTrue(models.InvoiceSum(
+                self.options,
+                amount=Decimal(10.3)
+            ).is_valid)
+
+    def test_invoice_sum_with_not_decimal_amount(self):
+        self.assertEqual(
+            models.InvoiceSum(
+                self.options,
+                amount=10.3,
+                currency=fields.CURRENCY_BTC,
+            ).get(),
+            '{"amount": "should be a Decimal"}')
 
     @skip
     def test_key_filtering(self):
