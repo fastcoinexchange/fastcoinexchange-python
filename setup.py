@@ -15,7 +15,17 @@ setup(
     maintainer_email="alexander@yudkin.com.ua",
 
     url="https://fastcoinexchange.com/",
-    # packages=find_packages(exclude=["tests.*", "tests"]),
+    packages=find_packages(exclude=[]),
+    install_requires=[
+        "booby==0.7.0",
+        "certifi==2017.4.17",
+        "chardet==3.0.4",
+        "cryptography==1.9",
+        "pyOpenSSL==17.1.0",
+        "requests==2.18.1",
+        "simplejson==3.11.1",
+        "urllib3==1.21.1",
+    ],
     classifiers=[
         'Intended Audience :: Developers',
         'Environment :: Web Environment',

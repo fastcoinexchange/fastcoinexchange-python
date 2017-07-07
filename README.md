@@ -4,7 +4,7 @@ Python library for the fastcoinexchange API
 This is a simple wrapper for the FastCoinExchange API, which makes you able to use API with your Python code.
 
 ## Installation
-`pip install fastcoinexchange_python` - in your environment.
+`pip install fastcoinexchange` - in your environment.
 
 Then you should import some gears to make this mechanism works.
 
