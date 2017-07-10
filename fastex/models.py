@@ -10,7 +10,7 @@ class Rate(Base):
 class Balance(Base):
     method = "balance"
     query_method = POST
-    is_private = False
+    is_private = True
 
     currency = fields.Currency()
 

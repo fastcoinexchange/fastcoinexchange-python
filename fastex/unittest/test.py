@@ -19,10 +19,20 @@ class SetupHelper(unittest.TestCase):
         super().setUp()
         self.PRIVATE = "PRIVATE"
         self.PUBLIC = "PUBLIC"
+        self.SERVER_PUBLIC = """-----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwT+SN3/aCAwyjsAt+Omu
+        9pvLZ9tnMqK0NHq99BgODSR8H+Gt6ZmqiTLCWn4EXyF0Bfjqf0lYTA03D3N1Bs2e
+        Pv+OvmNIpP9iF53zweArCgEvwIjotGDbFnrKi6zmeu7jt81D8K6X/g3uEsBhdb8/
+        MpulVjUhi0w5JZPUsn4IAI1xLqCVF1EV1Z6bldV4E4LieJrE80+Q0IS5W0YMxQNI
+        zZscoVa0jSERXVFQzR+KVVGfw+jD5I+lHmsFgQHS4BVEAFg1rHnFPG8RksYH/y9B
+        ENGQFzvl7Gc8posBVI8Y/PP0tM8n+d1HyoKwpx4Ohq0YA7qh5ru7DrjbqgHzoRtJ
+        9QIDAQAB
+        -----END PUBLIC KEY-----"""
         self.options = Options(
-            api_url="https://fastcoinexchange.com/api/v1/{method}",
+            api_url="https://test.fastcoinexchange.com/api/v1/{method}",
             private=self.PRIVATE,
             public=self.PUBLIC,
+            server_public=self.SERVER_PUBLIC,
             unique_id="test_unique",
         )
 
@@ -234,11 +244,11 @@ class TestData(SetupHelper, unittest.TestCase):
         self.assertEqual(models.Rate(self.options).make_data(), expected_data)
 
     def test_balance(self):
-        expected_data = {'currency': 'btc'}
-        self.assertEqual(models.Balance(
+        d = models.Balance(
             self.options,
             currency=fields.CURRENCY_BTC
-        ).make_data(), expected_data)
+        ).make_data()
+        self.assertTrue(self.options.encryption.verify(d['sign'], d['data']))
 
     def test_exchange(self):
         expected_data = {'amount': Decimal('10'), 'currency_from': 'btc', 'currency_to': 'usd'}

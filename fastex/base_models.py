@@ -14,12 +14,13 @@ GET, POST = range(2)
 
 class Options(object):
 
-    def __init__(self, api_url, private, public, unique_id, **kwargs):
+    def __init__(self, api_url, private, public, server_public, unique_id, **kwargs):
         self.api_url = api_url
         self.private = private
         self.public = public
+        self.server_public = server_public
         self.unique_id = unique_id
-        self.encryption = Encryption("sha1", self.public, self.private)
+        self.encryption = Encryption("sha512", self.public, self.private, self.server_public)
         for k, v in kwargs.items():
             self.__setattr__(k, v)
 
@@ -47,7 +48,7 @@ class Base(Model):
             else:
                 raise UnknownRequestMethod(self.query_method)
 
-            r = response.json()
+            r = json.loads(response.text.strip("Bad data"))
             code = r.get('code')
             if code is not 0:
                 raise APIError(code, r.get('return', '') or r.get('message', ''))
