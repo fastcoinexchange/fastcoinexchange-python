@@ -4,7 +4,7 @@ class APIError(Exception):
         self.msg = msg
 
     def __str__(self):
-        return 'FastCoinExchange APIError code: %s (%s)' % (self.code, self.msg)
+        return 'FastCoinExchange APIError "%s" (code: %s)' % (self.msg, self.code)
 
 
 class UnknownRequestMethod(Exception):

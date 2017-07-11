@@ -5,7 +5,7 @@ from booby import errors
 from booby.fields import *
 from booby.validators import nullable, Validator
 
-CURRENCY_BTC, CURRENCY_USD = 'btc', 'usd'
+CURRENCY_BTC, CURRENCY_USD = 'BTC', 'USD'
 CURRENCY_CHOICES = (CURRENCY_BTC, CURRENCY_USD, )
 
 

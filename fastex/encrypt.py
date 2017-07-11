@@ -30,8 +30,6 @@ class Encryption(object):
         json_data = json.dumps(data, use_decimal=True)
         data_combined = self.e(json_data.encode(), self.server_public)
         signature = self.data_sign(data_combined, self.private)
-        print("SIGN:", signature)
-        print("DATA:", data_combined)
         if signature:
             return {
                 'sign': signature,
@@ -82,9 +80,9 @@ class Encryption(object):
         if data:
             data_compressed = zlib.compress(data)
             data_encrypted, encrypted_key = self.rc4crypt(data_compressed, key)
-            data_encoded = base64.b64encode(data_encrypted)
+            data_encrypted = base64.b64encode(data_encrypted)
             encrypted_key = base64.b64encode(encrypted_key)
-            data_combined = self.combine_string(data_encoded, encrypted_key)
+            data_combined = self.combine_string(data_encrypted, encrypted_key)
             return self.data_url_encode(data_combined)
         return False
 
@@ -101,9 +99,7 @@ class Encryption(object):
         return data
 
     def combine_string(self, s1, s2):
-        s1 = s1.decode()
-        s2 = s2.decode()
-        return f"{s1}-{s2}"
+        return f"{s1.decode()}-{s2.decode()}"
 
     def decombine_string(self, data_combined):
         s1, s2 = data_combined.split('-')

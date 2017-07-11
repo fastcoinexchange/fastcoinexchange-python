@@ -1,4 +1,6 @@
 import json
+from urllib.parse import quote
+
 import requests
 import time
 
@@ -51,7 +53,7 @@ class Base(Model):
             r = json.loads(response.text.strip("Bad data"))
             code = r.get('code')
             if code is not 0:
-                raise APIError(code, r.get('return', '') or r.get('message', ''))
+                raise APIError(code, r['return']['message'] or r.get['message'])
             return r
         else:
             return json.dumps(dict(self.validation_errors))
