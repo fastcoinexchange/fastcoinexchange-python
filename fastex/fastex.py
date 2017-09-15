@@ -4,9 +4,10 @@ import base64
 import json
 import zlib
 
+from urllib.parse import quote, unquote
+
 import OpenSSL.crypto as ct
 
-from urllib.parse import quote, unquote
 from Crypto import Random
 from Crypto.Cipher import ARC4, PKCS1_v1_5
 from Crypto.PublicKey import RSA
