@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from setuptools import setup, find_packages
 
@@ -14,17 +15,18 @@ setup(
     maintainer="Alexander Yudkin",
     maintainer_email="alexander@yudkin.com.ua",
 
-    url="https://fastcoinexchange.com/",
+    url="https://github.com/fastcoinexchange/fastcoinexchange-python",
     packages=find_packages(exclude=[]),
     install_requires=[
-        "booby==0.7.0",
-        "certifi==2017.4.17",
-        "chardet==3.0.4",
         "cryptography==1.9",
+        "idna==2.5",
+        "pycrypto==2.6.1",
         "pyOpenSSL==17.1.0",
         "requests==2.18.1",
         "simplejson==3.11.1",
+        "six==1.10.0",
         "urllib3==1.21.1",
+        "virtualenv==15.1.0",
     ],
     classifiers=[
         'Intended Audience :: Developers',

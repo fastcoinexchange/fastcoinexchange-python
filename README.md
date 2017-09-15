@@ -6,52 +6,56 @@ This is a simple wrapper for the FastCoinExchange API, which makes you able to u
 ## Installation
 `pip install fastcoinexchange` - in your environment.
 
-Then you should import some gears to make this mechanism works.
-
-```python
-from fastex import models
-from fastex import fields
-from fastex.base_models import Options
-```
-
 ## How to use?
 
 ### Options
 
-If you want to have an access to the private methods, then tou have to save your parameters into `Options` instance:
+If you want to have an access to the private methods, then tou have to save your private and public keys into pem files. 
+You can get its in the FastCoinExchange administrative interface. Be careful, you can get them once only. 
+Also you need to save the server's public key.
 
 ```python
-options = Options(
-    api_url="https://fastcoinexchange.com/api/v1/{method}",
-    private=PRIVATE,  # your private key
-    public=PUBLIC,  # server's public key
-    unique_id="your_unique",  # your unique id
-)
+from fastex.api import Api
+
+SERVER_KEY = """-----BEGIN PUBLIC KEY-----
+...
+-----END PUBLIC KEY-----"""
+
+api = Api("<unique_id>", "<path_to_your_public_key.pem>", "<path_to_your_private_key.pem>", SERVER_KEY)
 ```
 
 ### Request API
 
-Let's assume that we want to get the current rate of the bitcoin.
+Let's assume that we want to get the current rate of the Bitcoin.
 Following code does that:
 
 ```python
-rate = models.Rate(options)
-rate.get()
+api.rate()
 
-# {'code': 0, 'data': {'tm': '1499418523', 'ask': 252656799000, 'bid': 249463614000}}
+# {'tm': '1499418523', 'ask': 252656799000, 'bid': 249463614000}
 ```
-This is a `dict` object, so you don't have to worry about the conversion.
+This is a `dict` object, so you don't have to worry about the serialization.
 
-### Response filtering
+### Exceptions
 
-If you need one field only, e.g. `bid`, you could use the `keys` argument like following:
+* FastexAPIError - it raised if API server returned an error message
+* FastexInvalidDataReceived - it raised if was got an invalid data from the API server
+* FastexBadDataDecoded - it raised if error occurred while response decoding
+
+For example:
+
 ```python
-rate.get(keys=['bid'])
-
-# {'tm': '1499422855'}
+try:
+    rate = api.balance(currency='LTC')
+except FastexAPIError as e:
+    print(e)
+else:
+    print("Rate", rate)
+    
+# FastCoinExchange APIError "Incorrect currency" (code: -55)
 ```
 
-## Models
+## Methods
 * Rate
 * Balance
 * Exchange
@@ -61,3 +65,5 @@ rate.get(keys=['bid'])
 * InvoiceSum
 
 this list might be extended
+
+The detail specialization you can find [here](https://test.fastcoinexchange.com/#api).
