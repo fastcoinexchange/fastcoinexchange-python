@@ -36,6 +36,24 @@ api.rate()
 ```
 This is a `dict` object, so you don't have to worry about the serialization.
 
+### Exceptions
+
+* FastexAPIError - it raised if API server returned an error message
+* FastexInvalidDataReceived - it raised if was got an invalid data from the API server
+* FastexBadDataDecoded - it raised if error occurred while response decoding
+
+For example:
+
+```python
+try:
+    rate = api.balance(currency='LTC')
+except FastexAPIError as e:
+    print(e)
+else:
+    print("Rate", rate)
+    
+# FastCoinExchange APIError "Incorrect currency" (code: -55)
+```
 
 ## Methods
 * Rate
