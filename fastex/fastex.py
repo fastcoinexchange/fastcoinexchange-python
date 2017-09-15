@@ -17,16 +17,6 @@ from exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataD
 OPENSSL_ALGO_SHA512 = 'sha512'
 OPENSSL_ALGO_SHA1 = 'sha1'
 
-SERVER_KEY = """-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwT+SN3/aCAwyjsAt+Omu
-9pvLZ9tnMqK0NHq99BgODSR8H+Gt6ZmqiTLCWn4EXyF0Bfjqf0lYTA03D3N1Bs2e
-Pv+OvmNIpP9iF53zweArCgEvwIjotGDbFnrKi6zmeu7jt81D8K6X/g3uEsBhdb8/
-MpulVjUhi0w5JZPUsn4IAI1xLqCVF1EV1Z6bldV4E4LieJrE80+Q0IS5W0YMxQNI
-zZscoVa0jSERXVFQzR+KVVGfw+jD5I+lHmsFgQHS4BVEAFg1rHnFPG8RksYH/y9B
-ENGQFzvl7Gc8posBVI8Y/PP0tM8n+d1HyoKwpx4Ohq0YA7qh5ru7DrjbqgHzoRtJ
-9QIDAQAB
------END PUBLIC KEY-----"""
-
 
 class Encryption(object):
     def __init__(self, remote_public_key, own_private_key, hash_alg=OPENSSL_ALGO_SHA1):
@@ -55,7 +45,7 @@ class Encryption(object):
 
     @staticmethod
     def __combine_strings(str1, str2):
-        return f"{str1.decode()}-{str2.decode()}"
+        return "{}-{}".format(str1.decode(), str2.decode())
 
     @staticmethod
     def __decombine_strings(data_combined):

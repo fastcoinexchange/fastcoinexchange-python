@@ -14,7 +14,7 @@ setup(
     maintainer="Alexander Yudkin",
     maintainer_email="alexander@yudkin.com.ua",
 
-    url="https://fastcoinexchange.com/",
+    url="https://github.com/fastcoinexchange/fastcoinexchange-python",
     packages=find_packages(exclude=[]),
     install_requires=[
         "cryptography==1.9",
