@@ -4,15 +4,18 @@ import base64
 import json
 import zlib
 
-from urllib.parse import quote, unquote
-
 import OpenSSL.crypto as ct
 
 from Crypto import Random
 from Crypto.Cipher import ARC4, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
-from exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataDecoded
+try:
+    from urllib.parse import quote, unquote
+except ImportError:
+    from urllib import quote, unquote
+
+from .exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataDecoded
 
 
 OPENSSL_ALGO_SHA512 = 'sha512'

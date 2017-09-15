@@ -15,7 +15,7 @@ You can get its in the FastCoinExchange administrative interface. Be careful, yo
 Also you need to save the server's public key.
 
 ```python
-from fastex import Api
+from fastex.api import Api
 
 SERVER_KEY = """-----BEGIN PUBLIC KEY-----
 ...
