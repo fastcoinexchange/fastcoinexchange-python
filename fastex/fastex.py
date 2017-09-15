@@ -108,7 +108,7 @@ class Encryption(object):
         return json.loads(data)
 
 
-class FastexApi(object):
+class Api(object):
     hash_type = OPENSSL_ALGO_SHA512
     nonce = None
     is_test = True
@@ -226,7 +226,7 @@ class FastexApi(object):
 
 # USAGE
 
-api = FastexApi("xddlcQ", "../publickey.pem", "../privatekey.pem", SERVER_KEY)
+api = Api("xddlcQ", "../publickey.pem", "../privatekey.pem", SERVER_KEY)
 
 try:
     rate = api.rate()
