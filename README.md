@@ -55,6 +55,16 @@ else:
 # FastCoinExchange APIError "Incorrect currency" (code: -55)
 ```
 
+### Constants
+
+You can use the following constants to avoid confusion, e.g. in currency names.
+
+```python
+from fastex.api import USD, BTC
+
+api.exchange(amount=0.0001, currency_from=BTC, currency_to=USD)
+```
+
 ## Methods
 * Rate
 * Balance

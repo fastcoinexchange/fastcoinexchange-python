@@ -21,6 +21,8 @@ from .exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadData
 OPENSSL_ALGO_SHA512 = 'sha512'
 OPENSSL_ALGO_SHA1 = 'sha1'
 
+USD, BTC = "USD", "BTC"
+
 
 class Encryption(object):
     def __init__(self, remote_public_key, own_private_key, hash_alg=OPENSSL_ALGO_SHA1):
