@@ -222,17 +222,3 @@ class Api(object):
     def invoicesum(self, *args, **kwargs):
         params = {}
         return self.__query_private('invoicesum', params=params, *args, **kwargs)
-
-
-# USAGE
-
-api = Api("xddlcQ", "../publickey.pem", "../privatekey.pem", SERVER_KEY)
-
-try:
-    rate = api.rate()
-except FastexAPIError as e:
-    print(e)
-else:
-    print("Rate", rate)
-
-print("Balance: ", api.balance(currency='USD'))
