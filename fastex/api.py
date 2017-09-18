@@ -148,7 +148,7 @@ class Api(object):
         )
         r = json.loads(response.text)
 
-        if not all(['return' in r, 'sign' in r, 'code'in r]):
+        if not all(['return' in r, 'sign' in r, 'code' in r]):
             raise FastexInvalidDataReceived
 
         decrypted_data = encryption.decode(r['sign'], r['return'])
@@ -164,7 +164,7 @@ class Api(object):
     def __query_public(self, method, params=None, detail=False):
         response = requests.get(self.url.format(method), params=params)
         r = json.loads(response.text)
-        if not r.get('code'):
+        if not 'code' in r:
             raise FastexInvalidDataReceived
 
         if r['code'] != 0:
