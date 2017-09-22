@@ -15,3 +15,8 @@ class FastexInvalidDataReceived(Exception):
 class FastexBadDataDecoded(Exception):
     def __str__(self):
         return 'Bad data decoded'
+
+
+class AccountDisabled(Exception):
+    def __str__(self):
+        return 'Account is disabled'

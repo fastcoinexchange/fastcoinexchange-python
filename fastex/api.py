@@ -9,19 +9,28 @@ import OpenSSL.crypto as ct
 from Crypto import Random
 from Crypto.Cipher import ARC4, PKCS1_v1_5
 from Crypto.PublicKey import RSA
+from decimal import Decimal
 
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib import quote, unquote
 
-from .exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataDecoded
-
+from .exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataDecoded, AccountDisabled
 
 OPENSSL_ALGO_SHA512 = 'sha512'
 OPENSSL_ALGO_SHA1 = 'sha1'
 
 USD, BTC = "USD", "BTC"
+
+
+def normalize(request_keys=None, response_keys=None):
+    def decorator(func):
+        def wrapper(self, *args, **kwargs):
+            kwargs = Api.dict_to_normalized(self, kwargs, Api.NTO, keys=request_keys)
+            return Api.dict_to_normalized(self, func(self, *args, **kwargs), Api.TON, keys=response_keys)
+        return wrapper
+    return decorator
 
 
 class Encryption(object):
@@ -108,8 +117,13 @@ class Api(object):
     hash_type = OPENSSL_ALGO_SHA512
     nonce = None
     is_test = True
+    multiplier = Decimal(10 ** 8)
+    divider = Decimal(10 ** -8)
 
-    def __init__(self, fastex_id, public, private, server_key, is_test=True):
+    TON, NTO = 0, 1
+
+    def __init__(self, fastex_id, public, private, server_key, is_test=True,
+                 money_type=Decimal, precision=8):
         s = open(public, "r").read()
         self.public = s  # RSA.importKey(s)
         s = open(private).read()
@@ -117,6 +131,8 @@ class Api(object):
         self.server_key = server_key
         self.is_test = is_test
         self.unique_id = fastex_id
+        self.money_type = money_type
+        self.precision = f".{''.join(['0' for x in range(precision-1)])}1"
 
     @property
     def url(self):
@@ -148,6 +164,9 @@ class Api(object):
         )
         r = json.loads(response.text)
 
+        if 'code' in r and r['code'] == -2:
+            raise AccountDisabled
+
         if not all(['return' in r, 'sign' in r, 'code' in r]):
             raise FastexInvalidDataReceived
 
@@ -174,17 +193,37 @@ class Api(object):
             return r
         return r['data']
 
+    def __to_normalized(self, value):
+        return self.money_type(
+            (Decimal(value) * self.divider).quantize(Decimal(self.precision)) or 0)
+
+    def __normalized_to(self, value):
+        return self.money_type(
+            (Decimal(value) * self.multiplier).quantize(Decimal(self.precision)) or 0)
+
+    def dict_to_normalized(self, d, normalizer, keys=None):
+        if not keys:
+            keys = d.keys()
+        if normalizer == self.TON:
+            nf = self.__to_normalized
+        elif normalizer == self.NTO:
+            nf = self.__normalized_to
+        return dict(map(lambda x: (x[0], nf(x[1]) if x[0] in keys else x[1]), d.items()))
+
     # ## METHODS ###
 
+    @normalize(response_keys=['bid'])
     def rate(self, *args, **kwargs):
         return self.__query_public('rate', *args, **kwargs)
 
+    @normalize()
     def balance(self, currency=None, *args, **kwargs):
         params = {}
         if currency:
             params = {'currency': currency}
         return self.__query_private('balance', params=params, *args, **kwargs)
 
+    @normalize(request_keys=['amount'], response_keys=['rate', 'amount_from', 'amount_to'])
     def exchange(self, amount, currency_from, currency_to, rate_ask=None, rate_bid=None, *args, **kwargs):
         params = {
             'amount': amount,
