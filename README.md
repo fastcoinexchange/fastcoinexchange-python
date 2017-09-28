@@ -1,4 +1,7 @@
 # fastcoinexchange-python
+
+[![PyPI version](https://badge.fury.io/py/FastCoinExchange.svg)](https://badge.fury.io/py/FastCoinExchange)
+
 Python library for the fastcoinexchange API
 
 This is a simple wrapper for the FastCoinExchange API, which makes you able to use API with your Python code.
