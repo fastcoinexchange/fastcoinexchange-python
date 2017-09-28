@@ -29,7 +29,7 @@ If you'll try to call any private method, you'll get the following exception:
 FastexPrivateRequestsDisabled: It`s impossible to make a private request without a fastex id, a public key, a private key or a server key definition.
 ```
 
-If you want to have an access to the private methods, then tou have to save your private and public keys into pem files. 
+If you want to have an access to the private methods, then you have to save your private and public keys into pem files. 
 You can get its in the FastCoinExchange administrative interface. Be careful, you can get them once only. 
 Also you need to save the server's public key.
 
@@ -57,9 +57,10 @@ This is a `dict` object, so you don't have to worry about the serialization.
 
 ### Exceptions
 
-* FastexAPIError - it raised if API server returned an error message
-* FastexInvalidDataReceived - it raised if was got an invalid data from the API server
-* FastexBadDataDecoded - it raised if error occurred while response decoding
+* FastexAPIError - it raises if API server returned an error message
+* FastexInvalidDataReceived - it raises if was got an invalid data from the API server
+* FastexBadDataDecoded - it raises if error occurred while response decoding
+* FastexPrivateRequestsDisabled - it raises if you have no defined private and public keys, server public key or your uniqu_id
 
 For example:
 
@@ -95,4 +96,4 @@ api.exchange(amount=0.0001, currency_from=BTC, currency_to=USD)
 
 this list might be extended
 
-The detail specialization you can find [here](https://test.fastcoinexchange.com/#api).
+The detail specification you can find [here](https://test.fastcoinexchange.com/#api).
