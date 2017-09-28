@@ -10,6 +10,22 @@ This is a simple wrapper for the FastCoinExchange API, which makes you able to u
 
 ### Options
 
+If you need public requests only, it's not necessarily to have any keys and fastex unique_id. 
+Just make an `Api` objects.
+
+```python
+from fastex.api import Api
+
+api = Api()
+```
+
+Notice: you will get a warning message `Fastex: Public requests only`.
+If you'll try to call any private method, you'll get the following exception:
+
+```
+FastexPrivateRequestsDisabled: It`s impossible to make a private request without a fastex id, a public key, a private key or a server key definition.
+```
+
 If you want to have an access to the private methods, then tou have to save your private and public keys into pem files. 
 You can get its in the FastCoinExchange administrative interface. Be careful, you can get them once only. 
 Also you need to save the server's public key.

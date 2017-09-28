@@ -1,4 +1,6 @@
 import time
+import warnings
+
 import requests
 import base64
 import json
@@ -16,7 +18,8 @@ try:
 except ImportError:
     from urllib import quote, unquote
 
-from .exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataDecoded, AccountDisabled
+from .exceptions import FastexAPIError, FastexInvalidDataReceived, FastexBadDataDecoded, AccountDisabled, \
+    FastexPrivateRequestsDisabled
 
 OPENSSL_ALGO_SHA512 = 'sha512'
 OPENSSL_ALGO_SHA1 = 'sha1'
@@ -119,20 +122,25 @@ class Api(object):
     is_test = True
     multiplier = Decimal(10 ** 8)
     divider = Decimal(10 ** -8)
+    public = None
+    private = None
 
     TON, NTO = 0, 1
 
-    def __init__(self, fastex_id, public, private, server_key, is_test=True,
+    def __init__(self, fastex_id=None, public=None, private=None, server_key=None, is_test=True,
                  money_type=Decimal, precision=8):
-        s = open(public, "r").read()
-        self.public = s  # RSA.importKey(s)
-        s = open(private).read()
-        self.private = s  # RSA.importKey(s)
+        if public:
+            s = open(public, "r").read()
+            self.public = s  # RSA.importKey(s)
+        if private:
+            s = open(private).read()
+            self.private = s  # RSA.importKey(s)
         self.server_key = server_key
         self.is_test = is_test
         self.unique_id = fastex_id
         self.money_type = money_type
         self.precision = f".{''.join(['0' for x in range(precision-1)])}1"
+        warnings.warn("Fastex: Public requests only", Warning)
 
     @property
     def url(self):
@@ -141,6 +149,9 @@ class Api(object):
         return "https://fastcoinexchange.com/api/v1/{}"
 
     def __query_private(self, method, params=None, detail=False):
+        if not all([self.public, self.private, self.server_key, self.unique_id]):
+            raise FastexPrivateRequestsDisabled()
+
         if self.nonce:
             self.nonce += 1
         else:

@@ -20,3 +20,9 @@ class FastexBadDataDecoded(Exception):
 class AccountDisabled(Exception):
     def __str__(self):
         return 'Account is disabled'
+
+
+class FastexPrivateRequestsDisabled(Exception):
+    def __str__(self):
+        return 'It`s impossible to make a private request without a fastex id, a public key, a private key or a ' \
+               'server key definition.'
