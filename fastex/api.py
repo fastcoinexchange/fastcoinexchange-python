@@ -223,7 +223,7 @@ class Api(object):
 
     # ## METHODS ###
 
-    @normalize(response_keys=['bid'])
+    @normalize(response_keys=['bid', 'ask'])
     def rate(self, *args, **kwargs):
         return self.__query_public('rate', *args, **kwargs)
 
