@@ -60,7 +60,7 @@ This is a `dict` object, so you don't have to worry about the serialization.
 * FastexAPIError - it raises if API server returned an error message
 * FastexInvalidDataReceived - it raises if was got an invalid data from the API server
 * FastexBadDataDecoded - it raises if error occurred while response decoding
-* FastexPrivateRequestsDisabled - it raises if you have no defined private and public keys, server public key or your uniqu_id
+* FastexPrivateRequestsDisabled - it raises if you have no defined private and public keys, server public key or your unique_id
 
 For example:
 
