@@ -135,12 +135,13 @@ class Api(object):
         if private:
             s = open(private).read()
             self.private = s  # RSA.importKey(s)
+        else:
+            warnings.warn("Fastex: Public requests only", Warning)
         self.server_key = server_key
         self.is_test = is_test
         self.unique_id = fastex_id
         self.money_type = money_type
         self.precision = f".{''.join(['0' for x in range(precision-1)])}1"
-        warnings.warn("Fastex: Public requests only", Warning)
 
     @property
     def url(self):
@@ -184,12 +185,15 @@ class Api(object):
         decrypted_data = encryption.decode(r['sign'], r['return'])
 
         if r['code'] != 0:
-            raise FastexAPIError(r['code'], decrypted_data.get('message') or decrypted_data['return']['message'])
+            raise FastexAPIError(r['code'],
+                                 decrypted_data.get('message')
+                                 or decrypted_data.get('errors')
+                                 or decrypted_data['return']['message'])
 
         if detail:
             r['data'] = decrypted_data
             return r
-        return decrypted_data['data']
+        return decrypted_data['data'] if 'data' in decrypted_data else decrypted_data
 
     def __query_public(self, method, params=None, detail=False):
         response = requests.get(self.url.format(method), params=params)
@@ -247,6 +251,7 @@ class Api(object):
             params.update({'rate_bid': rate_bid})
         return self.__query_private('exchange', params=params, *args, **kwargs)
 
+    @normalize(request_keys=['amount'], response_keys=['btc_due'])
     def invoice(self, amount, currency=None, *args, **kwargs):
         params = {
             'amount': amount,
@@ -255,16 +260,37 @@ class Api(object):
             params = {'currency': currency}
         return self.__query_private('invoice', params=params, *args, **kwargs)
 
+    @normalize(response_keys=['btc_due', 'amount_due', 'btc_paid', 'amount_paid'])
     def invoicecheck(self, address, *args, **kwargs):
         params = {
             'address': address,
         }
         return self.__query_private('invoicecheck', params=params, *args, **kwargs)
 
+    @normalize(response_keys=['bid'])
     def invoicerate(self, *args, **kwargs):
         params = {}
         return self.__query_private('invoicerate', params=params, *args, **kwargs)
 
+    @normalize(request_keys=['amount'], response_keys=['btc_due'])
     def invoicesum(self, *args, **kwargs):
         params = {}
         return self.__query_private('invoicesum', params=params, *args, **kwargs)
+
+    @normalize(request_keys=['amount'])
+    def send_btc(self, address, amount, *args, **kwargs):
+        params = {
+            'output_data': [
+                {
+                    'address': address,
+                    'amount': amount,
+                }
+            ]
+        }
+        return self.__query_private('send/btc/simple', params=params, *args, **kwargs)
+
+    def get_new_address(self, is_autoexchange=0, *args, **kwargs):
+        params = {
+            'is_autoexchange': is_autoexchange,
+        }
+        return self.__query_private('address/get/new', params=params, *args, **kwargs)
