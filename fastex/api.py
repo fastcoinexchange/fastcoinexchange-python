@@ -127,12 +127,16 @@ class Api(object):
 
     TON, NTO = 0, 1
 
-    def __init__(self, fastex_id=None, public=None, private=None, server_key=None, is_test=True,
-                 money_type=Decimal, precision=8):
+    def __init__(self, fastex_id=None, public=None, public_file=None, private=None, private_file=None, server_key=None,
+                 is_test=True, money_type=Decimal, precision=8):
         if public:
+            self.public = public
+        if private:
+            self.private = private
+        if not public and public_file:
             s = open(public, "r").read()
             self.public = s  # RSA.importKey(s)
-        if private:
+        if not private and private_file:
             s = open(private).read()
             self.private = s  # RSA.importKey(s)
         else:
