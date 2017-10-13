@@ -134,18 +134,20 @@ class Api(object):
         if private:
             self.private = private
         if not public and public_file:
-            s = open(public, "r").read()
+            s = open(public_file, "r").read()
             self.public = s  # RSA.importKey(s)
         if not private and private_file:
-            s = open(private).read()
+            s = open(private_file).read()
             self.private = s  # RSA.importKey(s)
-        else:
-            warnings.warn("Fastex: Public requests only", Warning)
+
         self.server_key = server_key
         self.is_test = is_test
         self.unique_id = fastex_id
         self.money_type = money_type
         self.precision = f".{''.join(['0' for x in range(precision-1)])}1"
+
+        if not self.private or not self.public or not self.server_key:
+            warnings.warn("Fastex: Public requests only", Warning)
 
     @property
     def url(self):
