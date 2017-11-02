@@ -8,8 +8,11 @@ class FastexAPIError(Exception):
 
 
 class FastexInvalidDataReceived(Exception):
+    def __init__(self, data):
+        self.data = data
+
     def __str__(self):
-        return 'Invalid data received'
+        return 'Invalid data received. Have got "%s"' % (self.data,)
 
 
 class FastexBadDataDecoded(Exception):

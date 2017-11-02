@@ -186,7 +186,7 @@ class Api(object):
             raise AccountDisabled
 
         if not all(['return' in r, 'sign' in r, 'code' in r]):
-            raise FastexInvalidDataReceived
+            raise FastexInvalidDataReceived(r)
 
         decrypted_data = encryption.decode(r['sign'], r['return'])
 
