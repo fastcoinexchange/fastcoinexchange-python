@@ -118,7 +118,6 @@ class Encryption(object):
 
 class Api(object):
     hash_type = OPENSSL_ALGO_SHA512
-    nonce = None
     is_test = True
     multiplier = Decimal(10 ** 8)
     divider = Decimal(10 ** -8)
@@ -159,13 +158,10 @@ class Api(object):
         if not all([self.public, self.private, self.server_key, self.unique_id]):
             raise FastexPrivateRequestsDisabled()
 
-        if self.nonce:
-            self.nonce += 1
-        else:
-            self.nonce = int(time.time())
+        nonce = int(time.time())
 
         req = {}
-        req.update({'nonce': self.nonce, 'currency': ''})
+        req.update({'nonce': nonce, 'currency': ''})
         req.update(params or {})
 
         encryption = Encryption(self.server_key, self.private, self.hash_type)
@@ -177,7 +173,7 @@ class Api(object):
                 'unique_id': self.unique_id,
                 'sign': sign,
                 'data': data,
-                'nonce': self.nonce
+                'nonce': nonce
             }
         )
         r = json.loads(response.text)
