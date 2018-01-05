@@ -118,7 +118,6 @@ class Encryption(object):
 
 class Api(object):
     hash_type = OPENSSL_ALGO_SHA512
-    nonce = None
     is_test = True
     multiplier = Decimal(10 ** 8)
     divider = Decimal(10 ** -8)
@@ -127,20 +126,27 @@ class Api(object):
 
     TON, NTO = 0, 1
 
-    def __init__(self, fastex_id=None, public=None, private=None, server_key=None, is_test=True,
-                 money_type=Decimal, precision=8):
+    def __init__(self, fastex_id=None, public=None, public_file=None, private=None, private_file=None, server_key=None,
+                 is_test=True, money_type=Decimal, precision=8):
         if public:
-            s = open(public, "r").read()
-            self.public = s  # RSA.importKey(s)
+            self.public = public
         if private:
-            s = open(private).read()
+            self.private = private
+        if not public and public_file:
+            s = open(public_file, "r").read()
+            self.public = s  # RSA.importKey(s)
+        if not private and private_file:
+            s = open(private_file).read()
             self.private = s  # RSA.importKey(s)
+
         self.server_key = server_key
         self.is_test = is_test
         self.unique_id = fastex_id
         self.money_type = money_type
         self.precision = f".{''.join(['0' for x in range(precision-1)])}1"
-        warnings.warn("Fastex: Public requests only", Warning)
+
+        if not self.private or not self.public or not self.server_key:
+            warnings.warn("Fastex: Public requests only", Warning)
 
     @property
     def url(self):
@@ -152,13 +158,10 @@ class Api(object):
         if not all([self.public, self.private, self.server_key, self.unique_id]):
             raise FastexPrivateRequestsDisabled()
 
-        if self.nonce:
-            self.nonce += 1
-        else:
-            self.nonce = int(time.time())
+        nonce = int(time.time())
 
         req = {}
-        req.update({'nonce': self.nonce, 'currency': ''})
+        req.update({'nonce': nonce, 'currency': ''})
         req.update(params or {})
 
         encryption = Encryption(self.server_key, self.private, self.hash_type)
@@ -170,7 +173,7 @@ class Api(object):
                 'unique_id': self.unique_id,
                 'sign': sign,
                 'data': data,
-                'nonce': self.nonce
+                'nonce': nonce
             }
         )
         r = json.loads(response.text)
@@ -179,17 +182,20 @@ class Api(object):
             raise AccountDisabled
 
         if not all(['return' in r, 'sign' in r, 'code' in r]):
-            raise FastexInvalidDataReceived
+            raise FastexInvalidDataReceived(r)
 
         decrypted_data = encryption.decode(r['sign'], r['return'])
 
         if r['code'] != 0:
-            raise FastexAPIError(r['code'], decrypted_data.get('message') or decrypted_data['return']['message'])
+            raise FastexAPIError(r['code'],
+                                 decrypted_data.get('message')
+                                 or decrypted_data.get('errors')
+                                 or decrypted_data['return']['message'])
 
         if detail:
             r['data'] = decrypted_data
             return r
-        return decrypted_data['data']
+        return decrypted_data['data'] if 'data' in decrypted_data else decrypted_data
 
     def __query_public(self, method, params=None, detail=False):
         response = requests.get(self.url.format(method), params=params)
@@ -214,7 +220,7 @@ class Api(object):
 
     def dict_to_normalized(self, d, normalizer, keys=None):
         if not keys:
-            keys = d.keys()
+            keys = []
         if normalizer == self.TON:
             nf = self.__to_normalized
         elif normalizer == self.NTO:
@@ -223,7 +229,7 @@ class Api(object):
 
     # ## METHODS ###
 
-    @normalize(response_keys=['bid'])
+    @normalize(response_keys=['bid', 'ask'])
     def rate(self, *args, **kwargs):
         return self.__query_public('rate', *args, **kwargs)
 
@@ -247,6 +253,7 @@ class Api(object):
             params.update({'rate_bid': rate_bid})
         return self.__query_private('exchange', params=params, *args, **kwargs)
 
+    @normalize(request_keys=['amount'], response_keys=['btc_due'])
     def invoice(self, amount, currency=None, *args, **kwargs):
         params = {
             'amount': amount,
@@ -255,16 +262,51 @@ class Api(object):
             params = {'currency': currency}
         return self.__query_private('invoice', params=params, *args, **kwargs)
 
+    @normalize(response_keys=['btc_due', 'amount_due', 'btc_paid', 'amount_paid'])
     def invoicecheck(self, address, *args, **kwargs):
         params = {
             'address': address,
         }
         return self.__query_private('invoicecheck', params=params, *args, **kwargs)
 
+    @normalize(response_keys=['bid'])
     def invoicerate(self, *args, **kwargs):
         params = {}
         return self.__query_private('invoicerate', params=params, *args, **kwargs)
 
+    @normalize(request_keys=['amount'], response_keys=['btc_due'])
     def invoicesum(self, *args, **kwargs):
         params = {}
         return self.__query_private('invoicesum', params=params, *args, **kwargs)
+
+    @normalize(request_keys=['amount'])
+    def send_btc(self, address, amount, *args, **kwargs):
+        params = {
+            'output_data': [
+                {
+                    'address': address,
+                    'amount': amount,
+                }
+            ]
+        }
+        return self.__query_private('send/btc/simple', params=params, *args, **kwargs)
+
+    def get_new_address(self, is_autoexchange=0, *args, **kwargs):
+        params = {
+            'is_autoexchange': is_autoexchange,
+        }
+        return self.__query_private('address/get/new', params=params, *args, **kwargs)
+
+    @normalize(request_keys=['amount'], response_keys=['amount', 'cost'])
+    def create_wex_coupon(self, amount, *args, **kwargs):
+        params = {
+            'amount': amount,
+        }
+        return self.__query_private('withdraw/wexcoupon/usd', params=params, *args, **kwargs)
+
+    @normalize(request_keys=['amount'], response_keys=['amount', 'cost'])
+    def wex_coupon_cost(self, amount, *args, **kwargs):
+        params = {
+            'amount': amount,
+        }
+        return self.__query_private('wex/usd/cost', params=params, *args, **kwargs)
