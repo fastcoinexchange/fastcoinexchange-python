@@ -220,7 +220,7 @@ class Api(object):
 
     def dict_to_normalized(self, d, normalizer, keys=None):
         if not keys:
-            keys = d.keys()
+            keys = []
         if normalizer == self.TON:
             nf = self.__to_normalized
         elif normalizer == self.NTO:
@@ -296,3 +296,17 @@ class Api(object):
             'is_autoexchange': is_autoexchange,
         }
         return self.__query_private('address/get/new', params=params, *args, **kwargs)
+
+    @normalize(request_keys=['amount'], response_keys=['amount', 'cost'])
+    def create_wex_coupon(self, amount, *args, **kwargs):
+        params = {
+            'amount': amount,
+        }
+        return self.__query_private('withdraw/wexcoupon/usd', params=params, *args, **kwargs)
+
+    @normalize(request_keys=['amount'], response_keys=['amount', 'cost'])
+    def wex_coupon_cost(self, amount, *args, **kwargs):
+        params = {
+            'amount': amount,
+        }
+        return self.__query_private('wex/usd/cost', params=params, *args, **kwargs)

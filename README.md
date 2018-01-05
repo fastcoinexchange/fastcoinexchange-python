@@ -90,6 +90,10 @@ api.exchange(amount=0.0001, currency_from=BTC, currency_to=USD)
 * InvoiceCheck
 * InvoiceRate
 * InvoiceSum
+* SendBTC
+* GetNewAddress
+* CreateWEXCode
+* WEXCouponCost
 
 this list might be extended
 
