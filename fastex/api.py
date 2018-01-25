@@ -233,7 +233,7 @@ class Api(object):
     def rate(self, *args, **kwargs):
         return self.__query_public('rate', *args, **kwargs)
 
-    @normalize()
+    @normalize(response_keys=['usd', 'btc'])
     def balance(self, currency=None, *args, **kwargs):
         params = {}
         if currency:
