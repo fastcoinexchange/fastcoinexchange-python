@@ -240,7 +240,7 @@ class Api(object):
             params = {'currency': currency}
         return self.__query_private('balance', params=params, *args, **kwargs)
 
-    @normalize(request_keys=['amount'], response_keys=['rate', 'amount_from', 'amount_to'])
+    @normalize(request_keys=['amount'], response_keys=['rate', 'from_amount', 'to_amount'])
     def exchange(self, amount, currency_from, currency_to, rate_ask=None, rate_bid=None, *args, **kwargs):
         params = {
             'amount': amount,
