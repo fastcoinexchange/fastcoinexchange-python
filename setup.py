@@ -10,10 +10,10 @@ setup(
     keywords="coin, exchange",
 
     author="Alexander Yudkin",
-    author_email="alexander@yudkin.com.ua",
+    author_email="san4ezy@gmail.com",
 
     maintainer="Alexander Yudkin",
-    maintainer_email="alexander@yudkin.com.ua",
+    maintainer_email="san4ezy@gmail.com",
 
     url="https://github.com/fastcoinexchange/fastcoinexchange-python",
     packages=find_packages(exclude=[]),
@@ -24,7 +24,7 @@ setup(
         "pyOpenSSL==17.1.0",
         "requests==2.18.1",
         "simplejson==3.11.1",
-        "six==1.10.0",
+        "six>=1.10.0",
         "urllib3==1.21.1",
         "virtualenv==15.1.0",
     ],
