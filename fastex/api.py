@@ -143,7 +143,7 @@ class Api(object):
         self.is_test = is_test
         self.unique_id = fastex_id
         self.money_type = money_type
-        self.precision = f".{''.join(['0' for x in range(precision-1)])}1"
+        self.precision = "%s1" % ''.join(['0' for x in range(precision-1)])
 
         if not self.private or not self.public or not self.server_key:
             warnings.warn("Fastex: Public requests only", Warning)
