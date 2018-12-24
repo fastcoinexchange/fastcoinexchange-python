@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from distutils.core import setup
+
+version = __import__('fastex').__version__
+download_url = 'https://github.com/shalakhin/fondy/archive/'+version+'.tar.gz'
+
 
 setup(
     name="FastCoinExchange",
-    version=__import__('fastex').__version__,
-    description=open(os.path.join(os.path.dirname(__file__), "DESCRIPTION")).read(),
+    version=version,
+    description=open(os.path.join(os.path.dirname(__file__), "DESCRIPTION"))\
+                     .read(),
     license="The MIT License (MIT)",
     keywords="coin, exchange",
 
@@ -16,6 +22,7 @@ setup(
     maintainer_email="olexandr@shalakhin.com",
 
     url="https://github.com/fastcoinexchange/fastcoinexchange-python",
+    download_url=download_url,
     packages=find_packages(exclude=[]),
     install_requires=[
         "cryptography==2.4.2",
