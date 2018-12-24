@@ -158,7 +158,7 @@ class Api(object):
         if not all([self.public, self.private, self.server_key, self.unique_id]):
             raise FastexPrivateRequestsDisabled()
 
-        nonce = int(time.time()) + 5
+        nonce = int(time.time()) + 1000
 
         req = {}
         req.update({'nonce': nonce, 'currency': ''})
