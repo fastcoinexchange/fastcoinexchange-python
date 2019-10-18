@@ -25,7 +25,7 @@ setup(
         "requests==2.18.1",
         "simplejson==3.11.1",
         "six==1.10.0",
-        "urllib3==1.21.1",
+        "urllib3==1.24.2",
         "virtualenv==15.1.0",
     ],
     classifiers=[
