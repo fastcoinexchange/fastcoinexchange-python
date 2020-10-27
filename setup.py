@@ -18,7 +18,7 @@ setup(
     url="https://github.com/fastcoinexchange/fastcoinexchange-python",
     packages=find_packages(exclude=[]),
     install_requires=[
-        "cryptography==1.9",
+        "cryptography==3.2",
         "idna==2.5",
         "pycrypto==2.6.1",
         "pyOpenSSL==17.1.0",
